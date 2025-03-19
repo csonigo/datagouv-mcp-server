@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "moduleDetection": "force",
+    "outDir": "./build",
+    "resolveJsonModule": true,
+    "rootDir": "./src",
+    "skipLibCheck": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "target": "es2022",
+    "types": ["node"],
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}
