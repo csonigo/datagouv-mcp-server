@@ -28,7 +28,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
 
   switch (name) {
-    case "search_company":
+    case "search-company":
       return tools.searchCompany((request.params.arguments as { query: string }).query);
     default:
       throw new Error(`Tool ${name} not found`);

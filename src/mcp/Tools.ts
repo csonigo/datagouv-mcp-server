@@ -6,7 +6,7 @@ export class Tools {
   
     public static TOOLS: Tool[] = [
       {
-        name: "search_company",
+        name: "search-company",
         description: "Find up to date information (name, address, list of directors, sector, etc.) about a company listed in France by providing a search query (name of the company, of the CEO, address, etc.)",
         inputSchema: {
             type: "object",
