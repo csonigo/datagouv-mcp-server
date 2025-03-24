@@ -1,10 +1,12 @@
 import express from "express";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { ListToolsRequestSchema, CallToolRequestSchema } from "@modelcontextprotocol/sdk/types.js";
+import {
+  ListToolsRequestSchema,
+  CallToolRequestSchema,
+} from "@modelcontextprotocol/sdk/types.js";
 import { Tools } from "./mcp/Tools.js";
 import getRawBody from "raw-body";
-import { z } from "zod";
 
 const server = new Server(
   {
@@ -14,34 +16,32 @@ const server = new Server(
   { capabilities: { tools: { listChanged: true } } }
 );
 
-
 const app = express();
 
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
   tools: Tools.TOOLS,
 }));
 
-
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const tools = new Tools();
   const { name } = request.params;
 
-
   switch (name) {
     case "search-company":
-      return tools.searchCompany((request.params.arguments as { query: string }).query);
+      return tools.searchCompany(
+        (request.params.arguments as { query: string }).query
+      );
     default:
       throw new Error(`Tool ${name} not found`);
   }
 });
 
-let transport: SSEServerTransport | undefined =
-  undefined;
+let transport: SSEServerTransport | undefined = undefined;
 
 app.get("/sse", async (req, res) => {
-    transport = new SSEServerTransport("/messages", res);
-    await server.connect(transport);
-  });
+  transport = new SSEServerTransport("/messages", res);
+  await server.connect(transport);
+});
 
 app.post("/messages", async (req, res) => {
   if (!transport) {
@@ -58,7 +58,7 @@ app.post("/messages", async (req, res) => {
   if (!messageBody.params) {
     messageBody.params = {};
   }
-  
+
   await transport.handlePostMessage(req, res, messageBody);
 });
 

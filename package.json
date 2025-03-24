@@ -16,7 +16,8 @@
   ],
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.7.0",
-    "express": "^5.0.1"
+    "express": "^5.0.1",
+    "raw-body": "^3.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",
