@@ -108,15 +108,18 @@ describe('get-company-details (Integration Tests)', () => {
     });
 
     it('devrait gérer un SIRET complet', async () => {
-      const result = await tools.getCompanyDetails({ identifier: '83237854100016' });
-      expect(result.isError).toBe(true);
+      const result = await tools.getCompanyDetails({ identifier: '80035414400043' });
+      expect(result.isError).toBeUndefined();
       expect(result.content).toHaveLength(1);
       const content = result.content?.[0];
       expect(content?.type).toBe('text');
 
       const text = getTextContent(content);
-      const error = parseErrorResponse(text);
-      expect(error.message).toBe('Format SIREN/SIRET invalide');
+      const details = parseCompanyDetails(text);
+      expect(details.identification.siren).toBe('800354144');
+      expect(details.identification.siret).toBe('80035414400043');
+      expect(details.identification.nom).toContain('STREAMROOT');
+      expect(details.statut.etat_administratif).toBe('A');
     });
   });
 

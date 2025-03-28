@@ -15,10 +15,35 @@ interface SearchCompanyParams {
   sort_order?: string;
 }
 
+interface GetCompanyDetailsParams {
+  identifier: string; // SIREN (9 chiffres) ou SIRET (14 chiffres)
+}
+
 interface SearchResponse {
   page: number;
   total_pages: number;
   results: Array<Record<string, unknown>>;
+}
+
+interface CompanyDetailsResponse {
+  results: Array<{
+    siren: string;
+    nom_complet: string;
+    nom_raison_sociale: string;
+    siege?: {
+      siret?: string;
+      tva_intra?: string;
+      [key: string]: unknown;
+    };
+    etat_administratif: string;
+    date_creation: string;
+    date_mise_a_jour?: string;
+    activite_principale: string;
+    tranche_effectif_salarie?: string;
+    categorie_entreprise?: string;
+    dirigeants?: Array<Record<string, unknown>>;
+    matching_etablissements?: Array<Record<string, unknown>>;
+  }>;
 }
 
 export class Tools {
@@ -88,6 +113,28 @@ export class Tools {
         required: ['query'],
       },
     },
+    {
+      name: 'get-company-details',
+      description:
+        "Récupérer les détails complets d'une entreprise par son identifiant SIREN (9 chiffres) ou SIRET (14 chiffres). Retourne :\n" +
+        '- Identification : SIREN, SIRET, nom complet, raison sociale, numéro TVA\n' +
+        '- Statut : état administratif, date de création, dernière modification\n' +
+        "- Activité : activité principale, tranche d'effectif, catégorie d'entreprise\n" +
+        '- Liste des dirigeants avec leurs informations\n' +
+        '- Informations du siège social\n' +
+        '- Liste des établissements',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          identifier: {
+            type: 'string',
+            description: 'Identifiant SIREN (9 chiffres) ou SIRET (14 chiffres)',
+            pattern: '^[0-9]{9}([0-9]{5})?$',
+          },
+        },
+        required: ['identifier'],
+      },
+    },
   ];
 
   public searchCompany = async (params: SearchCompanyParams): Promise<CallToolResult> => {
@@ -127,4 +174,101 @@ export class Tools {
       };
     }
   };
+
+  public async getCompanyDetails({ identifier }: GetCompanyDetailsParams): Promise<CallToolResult> {
+    try {
+      // Validation du format
+      if (!identifier || typeof identifier !== 'string') {
+        return {
+          isError: true,
+          content: [
+            { type: 'text', text: JSON.stringify({ message: 'Format SIREN/SIRET invalide' }) },
+          ],
+        };
+      }
+
+      // Vérifier si c'est un SIREN (9 chiffres) ou un SIRET (14 chiffres)
+      const isSiren = /^[0-9]{9}$/.test(identifier);
+      const isSiret = /^[0-9]{14}$/.test(identifier);
+
+      if (!isSiren && !isSiret) {
+        return {
+          isError: true,
+          content: [
+            { type: 'text', text: JSON.stringify({ message: 'Format SIREN/SIRET invalide' }) },
+          ],
+        };
+      }
+
+      // Vérifier les zéros au début pour SIREN uniquement
+      if (isSiren && identifier.startsWith('0')) {
+        return {
+          isError: true,
+          content: [
+            { type: 'text', text: JSON.stringify({ message: 'Format SIREN/SIRET invalide' }) },
+          ],
+        };
+      }
+
+      // Appel à l'API
+      const response = await fetch(
+        `https://recherche-entreprises.api.gouv.fr/search?q=${identifier}`
+      );
+      const data = (await response.json()) as CompanyDetailsResponse;
+
+      // Vérifier si l'entreprise existe
+      if (!data.results || data.results.length === 0) {
+        return {
+          isError: true,
+          content: [{ type: 'text', text: JSON.stringify({ message: 'Entreprise non trouvée' }) }],
+        };
+      }
+
+      const company = data.results[0];
+      if (!company) {
+        return {
+          isError: true,
+          content: [{ type: 'text', text: JSON.stringify({ message: 'Entreprise non trouvée' }) }],
+        };
+      }
+
+      // Formater la réponse pour une meilleure lisibilité
+      const formattedResponse = {
+        identification: {
+          siren: company.siren,
+          siret: company.siege?.siret,
+          nom: company.nom_complet,
+          raison_sociale: company.nom_raison_sociale,
+          tva_intra: company.siege?.tva_intra || 'Non disponible',
+        },
+        statut: {
+          etat_administratif: company.etat_administratif,
+          date_creation: company.date_creation,
+          derniere_modification: company.date_mise_a_jour,
+        },
+        activite: {
+          principale: company.activite_principale,
+          tranche_effectif: company.tranche_effectif_salarie,
+          categorie: company.categorie_entreprise,
+        },
+        dirigeants: company.dirigeants || [],
+        siege: company.siege || {},
+        etablissements: company.matching_etablissements || [],
+      };
+
+      return {
+        content: [{ type: 'text', text: JSON.stringify(formattedResponse) }],
+      };
+    } catch (error) {
+      return {
+        isError: true,
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify({ message: 'Erreur lors de la récupération des informations' }),
+          },
+        ],
+      };
+    }
+  }
 }
