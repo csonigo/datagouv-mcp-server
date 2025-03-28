@@ -1,0 +1,76 @@
+{
+  "project": {
+    "name": "datagouv-mcp-server",
+    "description": "MCP server for interacting with Data.gouv.fr APIs",
+    "type": "typescript"
+  },
+  "architecture": {
+    "pattern": "mcp-server",
+    "structure": {
+      "src/": {
+        "description": "Main source code",
+        "index.ts": "MCP server entry point",
+        "mcp/": "MCP tools implementations"
+      }
+    }
+  },
+  "dependencies": {
+    "core": [
+      "@modelcontextprotocol/sdk",
+      "express",
+      "raw-body"
+    ],
+    "dev": [
+      "typescript",
+      "@types/node",
+      "@types/express",
+      "tsx"
+    ]
+  },
+  "conventions": {
+    "code": {
+      "style": "typescript",
+      "formatting": {
+        "indent": 2,
+        "quotes": "single",
+        "semicolons": true
+      }
+    },
+    "naming": {
+      "files": "kebab-case",
+      "classes": "PascalCase",
+      "functions": "camelCase",
+      "variables": "camelCase",
+      "constants": "UPPER_SNAKE_CASE"
+    }
+  },
+  "mcp": {
+    "version": "1.0.0",
+    "transport": "http-sse",
+    "tools": {
+      "location": "src/mcp/Tools.ts",
+      "pattern": "class-based"
+    }
+  },
+  "testing": {
+    "framework": "vitest",
+    "coverage": {
+      "threshold": 80
+    }
+  },
+  "documentation": {
+    "style": "jsdoc",
+    "required": {
+      "classes": true,
+      "methods": true,
+      "parameters": true,
+      "returns": true
+    }
+  },
+  "security": {
+    "api_keys": {
+      "location": "environment",
+      "pattern": "DATAGOUV_API_KEY"
+    }
+  }
+} 
