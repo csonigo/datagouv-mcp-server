@@ -3,6 +3,9 @@
 MCP server for interacting with [Datagouv APIs](https://www.data.gouv.fr/fr/dataservices/?is_restricted=false). Specifically:
 
 - [API Recherche Entreprises](https://recherche-entreprises.api.gouv.fr/docs/)
+  - [Documentation technique](https://recherche-entreprises.api.gouv.fr/docs/technical)
+  - [Guide d'utilisation](https://recherche-entreprises.api.gouv.fr/docs/guide)
+  - [Exemples d'utilisation](https://recherche-entreprises.api.gouv.fr/docs/examples)
 
 This MCP server uses [HTTP+SSE transport](https://spec.modelcontextprotocol.io/specification/2024-11-05/basic/transports/#http-with-sse) defined in MCP
 
