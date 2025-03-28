@@ -10,13 +10,13 @@
     "moduleDetection": "force",
     "outDir": "./build",
     "resolveJsonModule": true,
-    "rootDir": "./src",
+    "rootDir": ".",
     "skipLibCheck": true,
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "target": "es2022",
-    "types": ["node"],
+    "types": ["node", "vitest"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
@@ -40,6 +40,6 @@
     "declarationMap": true,
     "incremental": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "build", "dist", "**/*.test.ts"]
+  "include": ["src/**/*", "vitest.config.ts"],
+  "exclude": ["node_modules", "build", "dist"]
 }
