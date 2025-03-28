@@ -41,6 +41,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           sort_order?: string;
         }
       );
+    case 'get-company-details':
+      return tools.getCompanyDetails(
+        request.params.arguments as {
+          identifier: string;
+        }
+      );
     default:
       throw new Error(`Tool ${name} not found`);
   }
