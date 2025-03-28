@@ -10,7 +10,11 @@
       "src/": {
         "description": "Main source code",
         "index.ts": "MCP server entry point",
-        "mcp/": "MCP tools implementations"
+        "mcp/": "MCP tools implementations",
+        "types/": "TypeScript type definitions",
+        "utils/": "Utility functions and helpers",
+        "services/": "External API service integrations",
+        "config/": "Configuration files"
       }
     }
   },
@@ -18,12 +22,22 @@
     "core": [
       "@modelcontextprotocol/sdk",
       "express",
-      "raw-body"
+      "raw-body",
+      "zod"
     ],
     "dev": [
       "typescript",
       "@types/node",
       "@types/express",
+      "@typescript-eslint/eslint-plugin",
+      "@typescript-eslint/parser",
+      "eslint",
+      "eslint-config-prettier",
+      "eslint-plugin-prettier",
+      "prettier",
+      "husky",
+      "lint-staged",
+      "vitest",
       "tsx"
     ]
   },
@@ -33,7 +47,9 @@
       "formatting": {
         "indent": 2,
         "quotes": "single",
-        "semicolons": true
+        "semicolons": true,
+        "maxLineLength": 100,
+        "trailingComma": "es5"
       }
     },
     "naming": {
@@ -41,7 +57,48 @@
       "classes": "PascalCase",
       "functions": "camelCase",
       "variables": "camelCase",
-      "constants": "UPPER_SNAKE_CASE"
+      "constants": "UPPER_SNAKE_CASE",
+      "types": "PascalCase",
+      "interfaces": "PascalCase",
+      "enums": "PascalCase"
+    },
+    "imports": {
+      "order": [
+        "node_modules",
+        "@/*",
+        "relative"
+      ],
+      "grouping": [
+        "builtin",
+        "external",
+        "internal",
+        "parent",
+        "sibling",
+        "index"
+      ]
+    }
+  },
+  "typescript": {
+    "strictness": {
+      "noImplicitAny": true,
+      "strictNullChecks": true,
+      "strictFunctionTypes": true,
+      "strictBindCallApply": true,
+      "strictPropertyInitialization": true,
+      "noImplicitThis": true,
+      "useUnknownInCatchVariables": true,
+      "alwaysStrict": true,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+      "exactOptionalPropertyTypes": true,
+      "noImplicitReturns": true,
+      "noFallthroughCasesInSwitch": true
+    },
+    "paths": {
+      "baseUrl": ".",
+      "aliases": {
+        "@/*": "src/*"
+      }
     }
   },
   "mcp": {
@@ -55,7 +112,18 @@
   "testing": {
     "framework": "vitest",
     "coverage": {
-      "threshold": 80
+      "threshold": 80,
+      "exclude": [
+        "**/*.d.ts",
+        "**/*.test.ts",
+        "**/*.spec.ts",
+        "**/types/**",
+        "**/test/**"
+      ]
+    },
+    "patterns": {
+      "unit": "**/*.test.ts",
+      "integration": "**/*.spec.ts"
     }
   },
   "documentation": {
@@ -64,13 +132,44 @@
       "classes": true,
       "methods": true,
       "parameters": true,
-      "returns": true
+      "returns": true,
+      "types": true,
+      "interfaces": true
+    },
+    "format": {
+      "description": "First line should be a brief description",
+      "params": "Each parameter should be documented with @param",
+      "returns": "Return value should be documented with @returns",
+      "examples": "Include @example for complex functions"
     }
   },
   "security": {
     "api_keys": {
       "location": "environment",
       "pattern": "DATAGOUV_API_KEY"
+    },
+    "validation": {
+      "input": "zod",
+      "sanitization": "required"
+    }
+  },
+  "git": {
+    "hooks": {
+      "pre-commit": [
+        "lint-staged"
+      ]
+    },
+    "commitMessage": {
+      "format": "type(scope): description",
+      "types": [
+        "feat",
+        "fix",
+        "docs",
+        "style",
+        "refactor",
+        "test",
+        "chore"
+      ]
     }
   }
 } 
