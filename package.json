@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "MCP server for interacting with Data.gouv.fr API",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
     "dev": "tsx watch src/index.ts",
