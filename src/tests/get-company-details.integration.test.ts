@@ -2,41 +2,41 @@ import { describe, it, expect } from 'vitest';
 import { Tools } from '../mcp/Tools.js';
 
 interface CompanyDetails {
-  identification: {
-    siren: string;
-    siret?: string;
-    nom: string;
-    raison_sociale: string;
-    tva_intra: string;
-  };
-  statut: {
-    etat_administratif: string;
-    date_creation: string;
-    derniere_modification?: string;
-  };
-  activite: {
-    principale: string;
-    tranche_effectif?: string;
-    categorie?: string;
-  };
+  siren: string;
+  siret?: string;
+  nom_complet: string;
+  raison_sociale: string;
+  tva_intra: string;
+  etat_administratif: string;
+  date_creation: string;
+  date_mise_a_jour?: string;
+  activite_principale: string;
+  tranche_effectif_salarie?: string;
+  categorie_entreprise?: string;
   dirigeants: Array<Record<string, unknown>>;
   siege: Record<string, unknown>;
-  etablissements: Array<Record<string, unknown>>;
+  matching_etablissements: Array<Record<string, unknown>>;
 }
 
 function parseCompanyDetails(text: string): CompanyDetails {
-  const parsed = JSON.parse(text) as unknown;
+  // Extraire uniquement la partie JSON (tout ce qui suit la première accolade)
+  const jsonStart = text.indexOf('{');
+  const jsonText = text.slice(jsonStart);
+  const parsed = JSON.parse(jsonText) as unknown;
   if (!parsed || typeof parsed !== 'object') {
     throw new Error('Format de réponse invalide');
   }
   const details = parsed as CompanyDetails;
   if (
-    !details.identification ||
-    !details.statut ||
-    !details.activite ||
-    !details.dirigeants ||
+    !details.siren ||
+    !details.nom_complet ||
+    !details.raison_sociale ||
+    !details.etat_administratif ||
+    !details.date_creation ||
+    !details.activite_principale ||
+    !Array.isArray(details.dirigeants) ||
     !details.siege ||
-    !details.etablissements
+    !Array.isArray(details.matching_etablissements)
   ) {
     throw new Error('Format de réponse invalide');
   }
@@ -75,9 +75,9 @@ describe('get-company-details (Integration Tests)', () => {
 
       const text = getTextContent(content);
       const details = parseCompanyDetails(text);
-      expect(details.identification.siren).toBe('832378541');
-      expect(details.identification.nom).toContain('MAUGIE');
-      expect(details.statut.etat_administratif).toBe('A');
+      expect(details.siren).toBe('832378541');
+      expect(details.nom_complet).toContain('MAUGIE');
+      expect(details.etat_administratif).toBe('A');
     });
 
     it("devrait récupérer les détails d'une grande entreprise (CARREFOUR)", async () => {
@@ -89,9 +89,9 @@ describe('get-company-details (Integration Tests)', () => {
 
       const text = getTextContent(content);
       const details = parseCompanyDetails(text);
-      expect(details.identification.siren).toBe('652014051');
-      expect(details.identification.nom).toContain('CARREFOUR');
-      expect(details.statut.etat_administratif).toBe('A');
+      expect(details.siren).toBe('652014051');
+      expect(details.nom_complet).toContain('CARREFOUR');
+      expect(details.etat_administratif).toBe('A');
     });
   });
 
@@ -116,10 +116,10 @@ describe('get-company-details (Integration Tests)', () => {
 
       const text = getTextContent(content);
       const details = parseCompanyDetails(text);
-      expect(details.identification.siren).toBe('800354144');
-      expect(details.identification.siret).toBe('80035414400043');
-      expect(details.identification.nom).toContain('STREAMROOT');
-      expect(details.statut.etat_administratif).toBe('A');
+      expect(details.siren).toBe('800354144');
+      expect(details.siret).toBe('80035414400043');
+      expect(details.nom_complet).toContain('STREAMROOT');
+      expect(details.etat_administratif).toBe('A');
     });
   });
 
@@ -181,27 +181,20 @@ describe('get-company-details (Integration Tests)', () => {
 
       const text = getTextContent(content);
       const details = parseCompanyDetails(text);
-      expect(details).toHaveProperty('identification');
-      expect(details.identification).toHaveProperty('siren');
-      expect(details.identification).toHaveProperty('nom');
-      expect(details.identification).toHaveProperty('raison_sociale');
-      expect(details.identification).toHaveProperty('tva_intra');
-
-      expect(details).toHaveProperty('statut');
-      expect(details.statut).toHaveProperty('etat_administratif');
-      expect(details.statut).toHaveProperty('date_creation');
-
-      expect(details).toHaveProperty('activite');
-      expect(details.activite).toHaveProperty('principale');
-
+      expect(details).toHaveProperty('siren');
+      expect(details.siren).toBe('832378541');
+      expect(details).toHaveProperty('nom_complet');
+      expect(details).toHaveProperty('raison_sociale');
+      expect(details).toHaveProperty('tva_intra');
+      expect(details).toHaveProperty('etat_administratif');
+      expect(details).toHaveProperty('date_creation');
+      expect(details).toHaveProperty('activite_principale');
       expect(details).toHaveProperty('dirigeants');
       expect(Array.isArray(details.dirigeants)).toBe(true);
-
       expect(details).toHaveProperty('siege');
       expect(typeof details.siege).toBe('object');
-
-      expect(details).toHaveProperty('etablissements');
-      expect(Array.isArray(details.etablissements)).toBe(true);
+      expect(details).toHaveProperty('matching_etablissements');
+      expect(Array.isArray(details.matching_etablissements)).toBe(true);
     });
   });
 });

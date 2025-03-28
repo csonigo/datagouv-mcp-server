@@ -65,10 +65,11 @@ This section has been postponed until we have more API functions and clearer dat
   - [ ] Add pagination support
   - [ ] Implement sorting options
   - [ ] Add date range filters
-- [ ] Complete company details by SIREN/SIRET
-  - [ ] Add detailed company information
-  - [ ] Include financial data
-  - [ ] Add legal status information
+- [x] Complete company details by SIREN/SIRET
+  - [x] Add basic company information
+  - [x] Add legal status information
+  - [x] Add establishment details
+  - [ ] Add financial data (to be implemented)
 - [ ] Directors history
   - [ ] Track changes in management
   - [ ] Add historical data
@@ -126,10 +127,10 @@ This section has been postponed until we have more API functions and clearer dat
 **Objective**: Ensure server reliability and robustness.
 
 ### 5.1 Unit Testing
-- [ ] Set up Vitest
-- [ ] Configure test environment
-- [ ] Write unit tests for all tools
-- [ ] Implement test utilities
+- [x] Set up Vitest
+- [x] Configure test environment
+- [x] Write unit tests for all tools
+- [x] Implement test utilities
 
 ### 5.2 Integration Testing
 - [ ] Set up integration test environment
@@ -175,10 +176,12 @@ This document will be updated regularly to track task completion. Each item will
 2. Code Quality Tools
 3. TypeScript Configuration
 4. API Documentation Links
+5. Company Details API Implementation
+6. Unit Testing Setup
 
 ### Next Priority
-1. Search Enhancements (Section 3.2)
-2. Testing Setup (Section 5.1)
+1. Advanced Search Features (Section 3.2)
+2. Integration Testing Setup (Section 5.2)
 
 ### Postponed
 1. Type System Implementation (Section 2.3) - Will be implemented as needed when adding new API functions 
