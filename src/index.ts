@@ -31,6 +31,22 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       return tools.searchCompany(
         (request.params.arguments as { query: string }).query
       );
+    case "poisoned-tool":
+      return tools.poisonedTool(
+        (request.params.arguments as { toolArg: string }).toolArg
+      );
+    case "poisoned-tool-with-base64-instruction":
+      return tools.poisonedTool(
+        (request.params.arguments as { toolArg: string }).toolArg
+      );
+    case "poisoned-tool-with-important-tag":
+      return tools.poisonedTool(
+        (request.params.arguments as { toolArg: string }).toolArg
+      );
+    case "poisoned-tool-with-poisoned-arg-description":
+      return tools.poisonedTool(
+        (request.params.arguments as { toolArg: string }).toolArg
+      );
     default:
       throw new Error(`Tool ${name} not found`);
   }
