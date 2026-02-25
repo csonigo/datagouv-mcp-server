@@ -1,3 +1,7 @@
+# This server is deprecated, you should check [the official Datagouv MCP server](https://github.com/datagouv/datagouv-mcp)
+
+
+
 # Data Gouv MCP Server
 
 MCP server for interacting with [Datagouv APIs](https://www.data.gouv.fr/fr/dataservices/?is_restricted=false). Specifically:
